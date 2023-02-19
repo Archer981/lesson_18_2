@@ -22,28 +22,19 @@
 # в данной задаче мы также опускаем логику работы с сущностями в БД.
 
 from flask import Flask
-from flask_restx import Api, Resource
-
-app = Flask(__name__)
-app.url_map.strict_slashes = False
-
-api = Api(app)
-book_ns = api.namespace('books')
+from flask_restx import Api
+from views.books import book_ns
 
 
-@book_ns.route('/')
-class BooksView(Resource):
-    def get(self):
-        return [], 200
-
-    def post(self):
-        return "", 201
+def create_app():
+    application = Flask(__name__)
+    application.url_map.strict_slashes = False
+    return application
 
 
-@book_ns.route('/<int:bid>')
-class BookView(Resource):
-    def get(self, bid):
-        return bid, 200
+def configure_app(application):
+    api = Api(application)
+    api.add_namespace(book_ns)
 
 
 # Вы можете протестировать свое приложение самостоятельно.
@@ -54,4 +45,6 @@ class BookView(Resource):
 #  GET http://localhost:10001/books/1 - returns bid (Int), code 200
 
 if __name__ == '__main__':
+    app = create_app()
+    configure_app(app)
     app.run(host="localhost", port=10001, debug=True)
