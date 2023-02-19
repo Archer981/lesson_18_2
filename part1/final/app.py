@@ -53,5 +53,47 @@
 # это необходимо для корректной работы тестов
 #
 #
+from flask import Flask
+from flask_restx import Api
+from setup_db import db
+from config import Config
+from models import Book, Review
+from views.books import book_ns
+from views.reviews import review_ns
 
-# app = Flask(__name__)
+
+def create_app(config_obj):
+    application = Flask(__name__)
+    application.config.from_object(config_obj)
+    application.app_context().push()
+    return application
+
+
+def configure_app(application):
+    db.init_app(application)
+    api = Api(application)
+    api.add_namespace(book_ns)
+    api.add_namespace(review_ns)
+
+
+def load_data():
+    db.create_all()
+    b1 = Book(id=1, name='Гарри Поттер и Тайная Комната', author='Джоан Роулинг', year=1990, pages=400)
+    b2 = Book(id=2, name='Граф Монте-Кристо', author='Дюма', year=1510, pages=1344)
+    b3 = Book(id=3, name='Гарри Поттер и Орден Феникса', author='Джоан Роулинг', year=1993, pages=500)
+    b4 = Book(id=4, name='Гарри Поттер и Кубок Огня', author='Джоан Роулинг', year=1994, pages=600)
+    r1 = Review(id=1, user='Oleg', rating=5, book_id=1)
+    r2 = Review(id=2, user='Ivan', rating=6, book_id=2)
+    r3 = Review(id=3, user='John', rating=4, book_id=3)
+    r4 = Review(id=4, user='Diana', rating=3, book_id=4)
+    with db.session.begin():
+        db.session.add_all([b1, b2, b3, b4])
+        db.session.add_all([r1, r2, r3, r4])
+        db.session.commit()
+
+
+config_app = Config
+app = create_app(config_app)
+configure_app(app)
+load_data()
+app.run()

@@ -57,12 +57,14 @@
 import requests
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from config import Config
+
 
 app = Flask(__name__)
-
+app_config = Config
+app.config.from_object(app_config)
+app.app_context().push()
 app.url_map.strict_slashes = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:' # TODO cохраните данные настройки 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False         # в классе Сonfig файла config.py
 db = SQLAlchemy(app)
 
 
@@ -79,7 +81,7 @@ db.create_all()
 
 @app.route("/import")
 def import_data():
-    data = requests.get(url='https://www.jsonkeeper.com/b/OXYI') # TODO Здесь добавьте ссылку на внешнее хранилище
+    data = requests.get(url=app.config['API_URL']) # TODO Здесь добавьте ссылку на внешнее хранилище
     for d in data.json():
         p = Phone(**d)
         with db.session.begin():
