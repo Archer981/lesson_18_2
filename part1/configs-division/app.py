@@ -79,7 +79,7 @@ db.create_all()
 
 @app.route("/import")
 def import_data():
-    data = requests.get(url='https://jsonkeeper.com/b/QBYO') # TODO Здесь добавьте ссылку на внешнее хранилище
+    data = requests.get(url='https://www.jsonkeeper.com/b/OXYI') # TODO Здесь добавьте ссылку на внешнее хранилище
     for d in data.json():
         p = Phone(**d)
         with db.session.begin():
