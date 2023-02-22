@@ -44,7 +44,10 @@ def configure_app(application):
 #  POST http://localhost:10001/books/ - returns "" code 201
 #  GET http://localhost:10001/books/1 - returns bid (Int), code 200
 
+
+app = create_app()
+configure_app(app)
+
 if __name__ == '__main__':
-    app = create_app()
-    configure_app(app)
+
     app.run(host="localhost", port=10001, debug=True)

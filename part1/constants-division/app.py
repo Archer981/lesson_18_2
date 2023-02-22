@@ -62,9 +62,12 @@ def load_data():
             db.session.add_all([sp1, sp2])
 
 
+app = create_app()
+configure_app(app)
+load_data()
+
+
 if __name__ == '__main__':
-    app = create_app()
-    configure_app(app)
-    load_data()
+
     app.run(host="localhost", port=10001, debug=True)
 
